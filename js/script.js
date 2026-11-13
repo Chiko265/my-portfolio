@@ -112,6 +112,91 @@ const initializeBackToTop = () => {
   });
 };
 
+const initializeCvDownload = () => {
+  const downloadButton = document.getElementById('downloadCV');
+  if (!downloadButton) {
+    return;
+  }
+
+  downloadButton.addEventListener('click', () => {
+    const JsPDF = window.jspdf?.jsPDF;
+    if (!JsPDF) {
+      window.alert('The CV could not be generated. Please try again when you are online.');
+      return;
+    }
+
+    const documentPdf = new JsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = documentPdf.internal.pageSize.getWidth();
+    const margin = 48;
+    const contentWidth = pageWidth - margin * 2;
+    let cursorY = 166;
+
+    documentPdf.setProperties({
+      title: 'Hastings Kholola - CV',
+      author: 'Hastings Kholola'
+    });
+    documentPdf.setFillColor(5, 15, 36);
+    documentPdf.rect(0, 0, pageWidth, 142, 'F');
+    documentPdf.setTextColor(245, 249, 255);
+    documentPdf.setFont('helvetica', 'bold');
+    documentPdf.setFontSize(25);
+    documentPdf.text('HASTINGS KHOLOLA', margin, 48);
+    documentPdf.setTextColor(64, 183, 255);
+    documentPdf.setFontSize(11);
+    documentPdf.text('COMPUTER SCIENCE STUDENT  |  WEB & GRAPHIC DESIGN', margin, 70);
+    documentPdf.setTextColor(220, 232, 247);
+    documentPdf.setFont('helvetica', 'normal');
+    documentPdf.setFontSize(9);
+    documentPdf.text('Malawi  |  0983152657  |  0888373383', margin, 98);
+    documentPdf.text('hastingskholola7@gmail.com  |  github.com/Chiko265', margin, 114);
+
+    const addSection = (title, paragraphs) => {
+      documentPdf.setFont('helvetica', 'bold');
+      documentPdf.setFontSize(11);
+      documentPdf.setTextColor(8, 118, 185);
+      documentPdf.text(title.toUpperCase(), margin, cursorY);
+      cursorY += 17;
+
+      documentPdf.setFont('helvetica', 'normal');
+      documentPdf.setFontSize(9.5);
+      documentPdf.setTextColor(37, 49, 66);
+      paragraphs.forEach((paragraph) => {
+        const lines = documentPdf.splitTextToSize(paragraph, contentWidth);
+        documentPdf.text(lines, margin, cursorY, { lineHeightFactor: 1.35 });
+        cursorY += lines.length * 13 + 4;
+      });
+
+      cursorY += 8;
+      documentPdf.setDrawColor(215, 226, 238);
+      documentPdf.setLineWidth(0.7);
+      documentPdf.line(margin, cursorY - 2, pageWidth - margin, cursorY - 2);
+    };
+
+    addSection('Profile', [
+      'Computer Science student interested in building practical digital solutions through website development, WordPress, graphic design, and networking.'
+    ]);
+    addSection('Education', [
+      'Bachelor of Science in Computer Science, DMI - St. John the Baptist University (In Progress).'
+    ]);
+    addSection('Technical Skills', [
+      'Programming: Python, Java, C, and C++',
+      'Web: HTML, CSS, JavaScript, Bootstrap, and WordPress',
+      'Graphic design: CorelDRAW, brand visuals, and creative layouts',
+      'Databases and tools: SQLite, VS Code, and GitHub',
+      'Networking: connectivity, troubleshooting, and system communication'
+    ]);
+    addSection('Project Areas', [
+      'Website development | WordPress development | Graphic design | Networking'
+    ]);
+
+    documentPdf.setFont('helvetica', 'normal');
+    documentPdf.setFontSize(8);
+    documentPdf.setTextColor(95, 108, 126);
+    documentPdf.text('Portfolio: github.com/Chiko265', margin, 790);
+    documentPdf.save('Hastings-Kholola-CV.pdf');
+  });
+};
+
 const initializeContactForm = () => {
   const contactForm = document.getElementById('contactForm');
   const formStatus = document.getElementById('formStatus');
@@ -150,11 +235,13 @@ if (document.readyState === 'loading') {
     initializeTheme();
     setActiveNav();
     initializeBackToTop();
+    initializeCvDownload();
     initializeContactForm();
   }, { once: true });
 } else {
   initializeTheme();
   setActiveNav();
   initializeBackToTop();
+  initializeCvDownload();
   initializeContactForm();
 }
